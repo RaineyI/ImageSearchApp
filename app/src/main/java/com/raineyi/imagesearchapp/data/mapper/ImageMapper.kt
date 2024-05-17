@@ -9,6 +9,7 @@ class ImageMapper @Inject constructor() {
     fun mapDtoToImage(dto: ImageDto): Image {
         return Image(
             id = dto.id,
+            title = dto.title,
             imageUrl = dto.imageUrl,
             link = dto.link
         )

@@ -6,6 +6,9 @@ data class ImageDto (
     @SerializedName("position")
     val id: Int,
 
+    @SerializedName("title")
+    val title: String? = null,
+
     @SerializedName("imageUrl")
     val imageUrl: String? = null,
 
