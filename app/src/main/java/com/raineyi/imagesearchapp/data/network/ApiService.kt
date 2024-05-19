@@ -19,7 +19,7 @@ suspend fun getImageResponse(
 
     companion object {
         private const val API_KEY = "35e03c08b35513efb1ba996f39a9e4c7051dc391"
-        private const val QUERY_PARAM_REQUEST = "request"
+        private const val QUERY_PARAM_REQUEST = "q"
         private const val QUERY_PARAM_PAGE = "page"
     }
 }

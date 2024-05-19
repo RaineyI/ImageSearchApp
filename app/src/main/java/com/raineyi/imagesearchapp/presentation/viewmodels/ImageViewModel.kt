@@ -14,7 +14,7 @@ class ImageViewModel @Inject constructor(
     private val loadImageListUseCase: LoadImageListUseCase
 ) : ViewModel() {
 
-    private var page = 1
+    private var currentPage = 1
 
     private var _listOfImages = MutableLiveData<List<Image>>()
     val listOfImages: LiveData<List<Image>>
@@ -25,7 +25,10 @@ class ImageViewModel @Inject constructor(
         get() = _isLoading
 
 
-    fun loadImages(request: String) {
+    fun loadImages(request: String, isNewSearch: Boolean) {
+        if (isNewSearch) {
+            currentPage = 1
+        }
         val loading = isLoading.value
         if (loading != null && loading) {
             return
@@ -33,7 +36,7 @@ class ImageViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val images = loadImageListUseCase(request, page)
+                val images = loadImageListUseCase(request, currentPage)
                 val loadedImages = _listOfImages.value?.toMutableList()
                 if (loadedImages != null) {
                     images?.let {
@@ -45,8 +48,10 @@ class ImageViewModel @Inject constructor(
                         _listOfImages.value = it
                     }
                 }
-                Log.d("TEST_API", "Loaded page: $page")
-                page++
+                Log.d("TEST_API", "Loaded page: $currentPage")
+                if (!isNewSearch) {
+                    currentPage++
+                }
             } catch (e: Exception) {
                 Log.d("TEST_API", e.message.toString())
             } finally {

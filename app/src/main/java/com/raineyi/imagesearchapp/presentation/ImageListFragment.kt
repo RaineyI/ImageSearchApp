@@ -71,40 +71,38 @@ class ImageListFragment @Inject constructor() : Fragment() {
         }
     }
 
-    private fun setupClickListener() {
+    private fun setupRecyclerView() {
+
+        imageAdapter = ImageAdapter()
+
+        with(binding.rvImageList) {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            adapter = imageAdapter
+        }
+
+        viewModel.listOfImages.observe(viewLifecycleOwner) { images ->
+            Log.d("TEST_API", "$images")
+            imageAdapter.submitList(images)
+        }
         imageAdapter.onImageClickListener = {image ->
 
         }
-    }
 
-    private fun setupRecyclerView() {
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(request: String?): Boolean {
                 Log.d("TEST_API", "onQueryTextSubmit: $request")
                 request?.let {
-                    val imageAdapter = ImageAdapter()
+                    viewModel.loadImages(it, true)
 //                    imageAdapter.onLoadMoreListener = {
-//                        viewModel.loadImages(it)
+//                        viewModel.loadImages(it, false)
 //                    }
-
-                    with(binding.rvImageList) {
-                        layoutManager = GridLayoutManager(requireContext(), 2)
-                        adapter = imageAdapter
-                    }
-                    viewModel.loadImages(request)
-                    viewModel.listOfImages.observe(viewLifecycleOwner) { images ->
-                        imageAdapter.submitList(images)
-                    }
                 }
-
                 return true
             }
-
             override fun onQueryTextChange(p0: String?): Boolean {
-                return true
+                return false
             }
         })
-        setupClickListener()
     }
 
     companion object {
