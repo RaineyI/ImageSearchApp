@@ -1,12 +1,16 @@
 package com.raineyi.imagesearchapp.di
 
 import androidx.lifecycle.ViewModel
-import com.raineyi.imagesearchapp.presentation.viewmodels.ImagesViewModel
+import com.raineyi.imagesearchapp.presentation.viewmodels.ImageViewModel
 import dagger.Binds
+import dagger.Module
+import dagger.multibindings.IntoMap
 
+@Module
 interface ViewModelModule {
 
     @Binds
-    @ViewModelKey(ImagesViewModel::class)
-    fun bindViewModel(viewModel: ImagesViewModel): ViewModel
+    @IntoMap
+    @ViewModelKey(ImageViewModel::class)
+    fun bindImageViewModel(viewModel: ImageViewModel): ViewModel
 }

@@ -9,13 +9,15 @@ import dagger.Component
 
 @ApplicationScope
 @Component(
-    modules = [DataModule::class,
-        ViewModelModule::class]
+    modules = [
+        DataModule::class,
+        ViewModelModule::class
+    ]
 )
 interface ApplicationComponent {
 
     fun inject(fragment: ImageListFragment)
-    fun inject(fragment: ImageDetailsFragment)
+//    fun inject(fragment: ImageDetailsFragment)
 
     @Component.Factory
     interface Factory {

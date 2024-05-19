@@ -10,14 +10,14 @@ import com.raineyi.imagesearchapp.domain.LoadImageListUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ImagesViewModel @Inject constructor(
+class ImageViewModel @Inject constructor(
     private val loadImageListUseCase: LoadImageListUseCase
 ) : ViewModel() {
 
     private var page = 1
 
     private var _listOfImages = MutableLiveData<List<Image>>()
-    val listOgImages: LiveData<List<Image>>
+    val listOfImages: LiveData<List<Image>>
         get() = _listOfImages
 
     private var _isLoading = MutableLiveData(false)

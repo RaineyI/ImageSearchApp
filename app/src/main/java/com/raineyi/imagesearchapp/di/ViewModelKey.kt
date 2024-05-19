@@ -1,9 +1,10 @@
 package com.raineyi.imagesearchapp.di
 
-import com.raineyi.imagesearchapp.presentation.viewmodels.ImagesViewModel
+import androidx.lifecycle.ViewModel
 import dagger.MapKey
 import kotlin.reflect.KClass
 
 @MapKey
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ViewModelKey(val value: KClass<ImagesViewModel>)
+annotation class ViewModelKey(val value: KClass<out ViewModel>)
+
