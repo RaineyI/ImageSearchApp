@@ -1,60 +1,108 @@
 package com.raineyi.imagesearchapp.presentation
 
+import android.content.Context
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.raineyi.imagesearchapp.R
+import androidx.lifecycle.ViewModelProvider
+import com.raineyi.imagesearchapp.databinding.FragmentImageDetailsBinding
+import com.raineyi.imagesearchapp.domain.Image
+import com.raineyi.imagesearchapp.presentation.adapters.ImageDetailViewPagerAdapter
+import com.raineyi.imagesearchapp.presentation.adapters.ZoomOutPageTransformer
+import com.raineyi.imagesearchapp.presentation.viewmodels.ImageViewModel
+import com.raineyi.imagesearchapp.presentation.viewmodels.ViewModelFactory
+import javax.inject.Inject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class ImageDetailsFragment @Inject constructor() : Fragment() {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ImageDetailsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class ImageDetailsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentImageDetailsBinding? = null
+    private val binding: FragmentImageDetailsBinding
+        get() = _binding ?: throw RuntimeException("FragmentImageDetailsBinding == null")
+
+    private val viewModel by lazy {
+        ViewModelProvider(requireActivity())[ImageViewModel::class.java]
+    }
+    private lateinit var image: Image
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        parseParam()
+        Log.d("TEST_APP", "onCreate, param = $image")
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_image_details, container, false)
+    ): View {
+        _binding = FragmentImageDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpViewPager2()
+        setUpOnBackPressedArrow()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+    private fun setUpOnBackPressedArrow() {
+        binding.arrowBack.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+    }
+
+    private fun parseParam() {
+        val args = requireArguments()
+        if (!args.containsKey(EXTRA_IMAGE)) {
+            throw RuntimeException("Param image is absent")
+        }
+        when {
+            SDK_INT >= 33 -> args.getParcelable(
+                EXTRA_IMAGE,
+                Image::class.java
+            )
+
+            else -> args.getParcelable<Image>(EXTRA_IMAGE)
+        }?.let {
+            image = it
+        }
+    }
+
+    private fun setUpViewPager2() {
+        val viewPagerAdapter = ImageDetailViewPagerAdapter()
+        Log.d("TEST_APP", "Details VM: ${viewModel.hashCode()}")
+
+        viewModel.listOfImages.observe(viewLifecycleOwner) { images ->
+            Log.d("TEST_APP", "observe view model: $images")
+            viewPagerAdapter.submitList(images)
+            with(binding.imageViewPager) {
+                adapter = viewPagerAdapter
+                setCurrentItem(images.indexOf(image), false)
+                setPageTransformer(ZoomOutPageTransformer())
+            }
+        }
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ImageDetailsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ImageDetailsFragment().apply {
+        private const val EXTRA_IMAGE = "extra_image"
+        fun newInstance(image: Image): ImageDetailsFragment {
+            return ImageDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putParcelable(EXTRA_IMAGE, image)
                 }
             }
+        }
     }
 }

@@ -10,11 +10,10 @@ import android.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.raineyi.imagesearchapp.R
 import com.raineyi.imagesearchapp.databinding.FragmentImageListBinding
-import com.raineyi.imagesearchapp.di.ApplicationComponent
-import com.raineyi.imagesearchapp.presentation.adapters.ImageAdapter
+import com.raineyi.imagesearchapp.presentation.adapters.ImageListAdapter
 import com.raineyi.imagesearchapp.presentation.viewmodels.ImageViewModel
-import com.raineyi.imagesearchapp.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
 
 class ImageListFragment @Inject constructor() : Fragment() {
@@ -23,23 +22,15 @@ class ImageListFragment @Inject constructor() : Fragment() {
     private val binding: FragmentImageListBinding
         get() = _binding ?: throw RuntimeException("FragmentImageListBinding == null")
 
-    private val component by lazy {
-        (requireActivity().application as ImageApp).component
-    }
 
-    private lateinit var imageAdapter: ImageAdapter
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var imageListAdapter: ImageListAdapter
 
     private val viewModel by lazy {
-        ViewModelProvider(this, viewModelFactory)[ImageViewModel::class.java]
+        ViewModelProvider(requireActivity())[ImageViewModel::class.java]
     }
 
     override fun onAttach(context: Context) {
-        component.inject(this)
         super.onAttach(context)
-
     }
 
     override fun onCreateView(
@@ -62,6 +53,7 @@ class ImageListFragment @Inject constructor() : Fragment() {
     }
 
     private fun observeIsLoading() {
+
         viewModel.isLoading.observe(viewLifecycleOwner) {
             if (it) {
                 binding.progressBar.visibility = View.VISIBLE
@@ -73,32 +65,43 @@ class ImageListFragment @Inject constructor() : Fragment() {
 
     private fun setupRecyclerView() {
 
-        imageAdapter = ImageAdapter()
+        imageListAdapter = ImageListAdapter()
 
         with(binding.rvImageList) {
             layoutManager = GridLayoutManager(requireContext(), 2)
-            adapter = imageAdapter
+            adapter = imageListAdapter
         }
 
+        Log.d("TEST_APP", "List VM: ${viewModel.hashCode()}")
         viewModel.listOfImages.observe(viewLifecycleOwner) { images ->
-            Log.d("TEST_API", "$images")
-            imageAdapter.submitList(images)
+            Log.d("TEST_APP", "$images")
+            imageListAdapter.submitList(images)
         }
-        imageAdapter.onImageClickListener = {image ->
 
+        imageListAdapter.onImageClickListener = { image ->
+            Log.d("TEST_APP", "onQueryTextSubmit: $image")
+
+            requireActivity().supportFragmentManager.beginTransaction()
+                .add(
+                    R.id.images_container,
+                    ImageDetailsFragment.newInstance(image)
+                )
+                .addToBackStack(null)
+                .commit()
         }
 
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(request: String?): Boolean {
-                Log.d("TEST_API", "onQueryTextSubmit: $request")
+                Log.d("TEST_APP", "onQueryTextSubmit: $request")
                 request?.let {
-                    viewModel.loadImages(it, true)
+                    viewModel.loadImages(it, NEW_SEARCH)
 //                    imageAdapter.onLoadMoreListener = {
-//                        viewModel.loadImages(it, false)
+//                        viewModel.loadImages(it, CURRENT_SEARCH)
 //                    }
                 }
                 return true
             }
+
             override fun onQueryTextChange(p0: String?): Boolean {
                 return false
             }
@@ -106,6 +109,9 @@ class ImageListFragment @Inject constructor() : Fragment() {
     }
 
     companion object {
+
+        private const val NEW_SEARCH = true
+        private const val CURRENT_SEARCH = false
         fun newInstance(): ImageListFragment {
             return ImageListFragment()
         }

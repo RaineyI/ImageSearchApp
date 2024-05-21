@@ -3,6 +3,7 @@ package com.raineyi.imagesearchapp.di
 import android.app.Application
 import com.raineyi.imagesearchapp.presentation.ImageDetailsFragment
 import com.raineyi.imagesearchapp.presentation.ImageListFragment
+import com.raineyi.imagesearchapp.presentation.MainActivity
 import dagger.BindsInstance
 import dagger.Component
 
@@ -17,7 +18,8 @@ import dagger.Component
 interface ApplicationComponent {
 
     fun inject(fragment: ImageListFragment)
-//    fun inject(fragment: ImageDetailsFragment)
+    fun inject(fragment: ImageDetailsFragment)
+    fun inject(activity: MainActivity)
 
     @Component.Factory
     interface Factory {

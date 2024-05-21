@@ -7,29 +7,29 @@ import com.raineyi.imagesearchapp.databinding.ImageItemBinding
 import com.raineyi.imagesearchapp.domain.Image
 import com.squareup.picasso.Picasso
 
-class ImageAdapter : ListAdapter<Image, ImageViewHolder>(ImageDiffCallback) {
+class ImageListAdapter : ListAdapter<Image, ImageListViewHolder>(ImageDiffCallback) {
 
     var onLoadMoreListener: (() -> Unit)? = null
     var onImageClickListener: ((Image) -> Unit)? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageListViewHolder {
         val binding = ImageItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        return ImageViewHolder(binding)
+        return ImageListViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ImageListViewHolder, position: Int) {
         val imageItem = getItem(position)
         val binding = holder.binding
 
         Picasso.get()
                 .load(imageItem.imageUrl)
-                .into(binding.image)
+                .into(binding.imageCard)
 
-        if(position>= currentList.size - 5) {
+        if(position >= currentList.size - 5) {
             onLoadMoreListener?.invoke()
         }
 
