@@ -1,20 +1,21 @@
 package com.raineyi.imagesearchapp.presentation
 
-import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.raineyi.imagesearchapp.databinding.FragmentImageDetailsBinding
 import com.raineyi.imagesearchapp.domain.Image
 import com.raineyi.imagesearchapp.presentation.adapters.ImageDetailViewPagerAdapter
 import com.raineyi.imagesearchapp.presentation.adapters.ZoomOutPageTransformer
 import com.raineyi.imagesearchapp.presentation.viewmodels.ImageViewModel
-import com.raineyi.imagesearchapp.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
 
 class ImageDetailsFragment @Inject constructor() : Fragment() {
@@ -27,10 +28,6 @@ class ImageDetailsFragment @Inject constructor() : Fragment() {
         ViewModelProvider(requireActivity())[ImageViewModel::class.java]
     }
     private lateinit var image: Image
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +47,20 @@ class ImageDetailsFragment @Inject constructor() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpViewPager2()
         setUpOnBackPressedArrow()
+        setUpLinkButton()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun setUpLinkButton() {
+        binding.buttonLink.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(image.link)
+            startActivity(intent)
+        }
     }
 
     private fun setUpOnBackPressedArrow() {
@@ -91,6 +97,13 @@ class ImageDetailsFragment @Inject constructor() : Fragment() {
                 adapter = viewPagerAdapter
                 setCurrentItem(images.indexOf(image), false)
                 setPageTransformer(ZoomOutPageTransformer())
+                registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        Log.d("TEST_APP", "Item: $position - ${images[position]}")
+                        image = images[position]
+                    }
+                })
             }
         }
     }

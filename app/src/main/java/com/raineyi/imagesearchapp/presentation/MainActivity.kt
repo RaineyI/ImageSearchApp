@@ -37,7 +37,7 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
     }
 
     private fun launchFragmentImageList() {
-//        supportFragmentManager.popBackStack()
+        supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
             .replace(R.id.images_container, ImageListFragment.newInstance())
             .addToBackStack(null)

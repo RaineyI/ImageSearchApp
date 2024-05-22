@@ -47,13 +47,13 @@ class ImageListFragment @Inject constructor() : Fragment() {
         observeIsLoading()
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
 
     private fun observeIsLoading() {
-
         viewModel.isLoading.observe(viewLifecycleOwner) {
             if (it) {
                 binding.progressBar.visibility = View.VISIBLE
@@ -64,7 +64,6 @@ class ImageListFragment @Inject constructor() : Fragment() {
     }
 
     private fun setupRecyclerView() {
-
         imageListAdapter = ImageListAdapter()
 
         with(binding.rvImageList) {
@@ -80,7 +79,7 @@ class ImageListFragment @Inject constructor() : Fragment() {
 
         imageListAdapter.onImageClickListener = { image ->
             Log.d("TEST_APP", "onQueryTextSubmit: $image")
-
+//            requireActivity().supportFragmentManager.popBackStack()
             requireActivity().supportFragmentManager.beginTransaction()
                 .add(
                     R.id.images_container,

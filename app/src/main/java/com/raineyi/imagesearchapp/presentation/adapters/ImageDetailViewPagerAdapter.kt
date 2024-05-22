@@ -25,9 +25,3 @@ class ImageDetailViewPagerAdapter : ListAdapter<Image, ImageDetailViewHolder>(Im
             .into(holder.binding.imageView)
     }
 }
-
-
-//        holder.toolbar.setNavigationOnClickListener {
-//            activity.finish()
-//        }
-//    }
