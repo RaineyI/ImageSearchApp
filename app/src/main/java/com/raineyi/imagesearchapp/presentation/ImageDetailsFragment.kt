@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +31,6 @@ class ImageDetailsFragment @Inject constructor() : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseParam()
-        Log.d("TEST_APP", "onCreate, param = $image")
     }
 
     override fun onCreateView(
@@ -88,19 +86,17 @@ class ImageDetailsFragment @Inject constructor() : Fragment() {
 
     private fun setUpViewPager2() {
         val viewPagerAdapter = ImageDetailViewPagerAdapter()
-        Log.d("TEST_APP", "Details VM: ${viewModel.hashCode()}")
 
         viewModel.listOfImages.observe(viewLifecycleOwner) { images ->
-            Log.d("TEST_APP", "observe view model: $images")
             viewPagerAdapter.submitList(images)
             with(binding.imageViewPager) {
                 adapter = viewPagerAdapter
+
                 setCurrentItem(images.indexOf(image), false)
                 setPageTransformer(ZoomOutPageTransformer())
                 registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
-                        Log.d("TEST_APP", "Item: $position - ${images[position]}")
                         image = images[position]
                     }
                 })
@@ -110,6 +106,7 @@ class ImageDetailsFragment @Inject constructor() : Fragment() {
 
     companion object {
         private const val EXTRA_IMAGE = "extra_image"
+        const val FRAGMENT_TAG = "image_details_tag"
         fun newInstance(image: Image): ImageDetailsFragment {
             return ImageDetailsFragment().apply {
                 arguments = Bundle().apply {

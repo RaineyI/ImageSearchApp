@@ -1,14 +1,9 @@
 package com.raineyi.imagesearchapp.presentation
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.raineyi.imagesearchapp.R
-import com.raineyi.imagesearchapp.databinding.ActivityMainBinding
 import com.raineyi.imagesearchapp.presentation.viewmodels.ImageViewModel
 import com.raineyi.imagesearchapp.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
@@ -24,22 +19,28 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
 
     private lateinit var viewModel: ImageViewModel
 
-    //    private val viewModel by lazy {
-//        ViewModelProvider(this, viewModelFactory)[ImageViewModel::class.java]
-//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
         setContentView(R.layout.activity_main)
         viewModel = ViewModelProvider(this, viewModelFactory)[ImageViewModel::class.java]
         launchFragmentImageList()
+        checkImageDetailsFragment()
+    }
+
+    private fun checkImageDetailsFragment() {
+        val imageDetailsFragment =
+            supportFragmentManager.findFragmentByTag(ImageDetailsFragment.FRAGMENT_TAG)
+        if (imageDetailsFragment != null) {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.images_container, imageDetailsFragment)
+            fragmentTransaction.commit()
+        }
     }
 
     private fun launchFragmentImageList() {
-//        supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
             .replace(R.id.images_container, ImageListFragment.newInstance())
-//            .addToBackStack(null)
             .commit()
     }
 }

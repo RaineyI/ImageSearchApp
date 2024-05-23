@@ -27,9 +27,15 @@ class ImageListAdapter : ListAdapter<Image, ImageListViewHolder>(ImageDiffCallba
 
         Picasso.get()
             .load(imageItem.imageUrl)
+            .resize(300, 0)
+            .fetch()
+
+        Picasso.get()
+            .load(imageItem.imageUrl)
+            .resize(300, 0)
             .into(binding.imageCard)
 
-        if (position >= currentList.size - 8) {
+        if (position >= currentList.size - 10) {
             onLoadMoreListener?.invoke()
         }
 

@@ -5,7 +5,7 @@ import androidx.viewpager2.widget.ViewPager2
 import kotlin.math.abs
 import kotlin.math.max
 
-class ZoomOutPageTransformer : ViewPager2.PageTransformer{
+class ZoomOutPageTransformer : ViewPager2.PageTransformer {
     override fun transformPage(view: View, position: Float) {
         view.apply {
             val pageWidth = width
@@ -14,6 +14,7 @@ class ZoomOutPageTransformer : ViewPager2.PageTransformer{
                 position < -1 -> {
                     alpha = 0f
                 }
+
                 position <= 1 -> {
                     val scaleFactor = max(MIN_SCALE, 1 - abs(position))
                     val vertMargin = pageHeight * (1 - scaleFactor) / 2
@@ -30,6 +31,7 @@ class ZoomOutPageTransformer : ViewPager2.PageTransformer{
                     alpha = (MIN_ALPHA +
                             (((scaleFactor - MIN_SCALE) / (1 - MIN_SCALE)) * (1 - MIN_ALPHA)))
                 }
+
                 else -> {
                     alpha = 0f
                 }

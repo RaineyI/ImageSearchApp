@@ -4,7 +4,7 @@
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="4dp"
+    app:cardCornerRadius="8dp"
     app:cardUseCompatPadding="true">
 
     <ImageView
@@ -12,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
         android:contentDescription="@string/image"
+        android:scaleType="centerCrop"
         tool:src="@drawable/test_im" />
 
 </androidx.cardview.widget.CardView>

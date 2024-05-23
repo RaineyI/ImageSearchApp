@@ -51,7 +51,7 @@ class ImageViewModel @Inject constructor(
                         _listOfImages.value = loadedImages
                     }
                 }
-                Log.d("TEST_APP", "Loaded page: $currentPage")
+                Log.d("TEST_API", "Loaded page: $currentPage")
 
             } catch (e: Exception) {
                 Log.d("TEST_API", e.message.toString())
