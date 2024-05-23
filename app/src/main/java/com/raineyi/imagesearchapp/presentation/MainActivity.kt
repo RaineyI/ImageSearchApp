@@ -1,5 +1,8 @@
 package com.raineyi.imagesearchapp.presentation
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -11,10 +14,6 @@ import com.raineyi.imagesearchapp.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
 
 class MainActivity @Inject constructor() : AppCompatActivity() {
-
-    private val binding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }
 
     private val component by lazy {
         (application as ImageApp).component
@@ -37,10 +36,10 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
     }
 
     private fun launchFragmentImageList() {
-        supportFragmentManager.popBackStack()
+//        supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
             .replace(R.id.images_container, ImageListFragment.newInstance())
-            .addToBackStack(null)
+//            .addToBackStack(null)
             .commit()
     }
 }

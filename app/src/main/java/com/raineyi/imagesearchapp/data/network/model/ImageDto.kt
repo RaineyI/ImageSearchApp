@@ -1,10 +1,11 @@
 package com.raineyi.imagesearchapp.data.network.model
 
 import com.google.gson.annotations.SerializedName
+import java.util.UUID
 
 data class ImageDto (
-    @SerializedName("position")
-    val id: Int,
+//    @SerializedName("position")
+    val id: String = generateUniqueIDUsingUUID(),
 
     @SerializedName("title")
     val title: String? = null,
@@ -14,4 +15,11 @@ data class ImageDto (
 
     @SerializedName("link")
     val link: String? = null,
-)
+) {
+
+    companion object {
+        fun generateUniqueIDUsingUUID(): String {
+            return UUID.randomUUID().toString()
+        }
+    }
+}

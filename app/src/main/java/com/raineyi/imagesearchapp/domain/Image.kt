@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Image(
-    val id: Int,
+    val id: String,
     val title: String? = null,
     val imageUrl: String? = null,
     val link: String? = null,

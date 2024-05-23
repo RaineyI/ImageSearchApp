@@ -26,10 +26,10 @@ class ImageListAdapter : ListAdapter<Image, ImageListViewHolder>(ImageDiffCallba
         val binding = holder.binding
 
         Picasso.get()
-                .load(imageItem.imageUrl)
-                .into(binding.imageCard)
+            .load(imageItem.imageUrl)
+            .into(binding.imageCard)
 
-        if(position >= currentList.size - 5) {
+        if (position >= currentList.size - 8) {
             onLoadMoreListener?.invoke()
         }
 

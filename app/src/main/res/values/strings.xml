@@ -5,4 +5,7 @@
     <string name="image">Image</string>
     <string name="go_to_the_website">Go to the website</string>
     <string name="search">Search...</string>
+    <string name="retry">Retry</string>
+    <string name="network_error">Network error</string>
+    <string name="network_error_image">Network error image</string>
 </resources>

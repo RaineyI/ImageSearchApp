@@ -1,6 +1,8 @@
 package com.raineyi.imagesearchapp.presentation
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,8 +12,11 @@ import android.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.raineyi.imagesearchapp.R
 import com.raineyi.imagesearchapp.databinding.FragmentImageListBinding
+import com.raineyi.imagesearchapp.domain.Image
 import com.raineyi.imagesearchapp.presentation.adapters.ImageListAdapter
 import com.raineyi.imagesearchapp.presentation.viewmodels.ImageViewModel
 import javax.inject.Inject
@@ -29,10 +34,6 @@ class ImageListFragment @Inject constructor() : Fragment() {
         ViewModelProvider(requireActivity())[ImageViewModel::class.java]
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,10 +44,9 @@ class ImageListFragment @Inject constructor() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
         observeIsLoading()
+        setupRecyclerView()
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -64,39 +64,31 @@ class ImageListFragment @Inject constructor() : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        imageListAdapter = ImageListAdapter()
+//        var lastVisibleItemPosition = 0
 
+        imageListAdapter = ImageListAdapter()
         with(binding.rvImageList) {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = imageListAdapter
         }
-
-        Log.d("TEST_APP", "List VM: ${viewModel.hashCode()}")
-        viewModel.listOfImages.observe(viewLifecycleOwner) { images ->
-            Log.d("TEST_APP", "$images")
-            imageListAdapter.submitList(images)
-        }
-
-        imageListAdapter.onImageClickListener = { image ->
-            Log.d("TEST_APP", "onQueryTextSubmit: $image")
-//            requireActivity().supportFragmentManager.popBackStack()
-            requireActivity().supportFragmentManager.beginTransaction()
-                .add(
-                    R.id.images_container,
-                    ImageDetailsFragment.newInstance(image)
-                )
-                .addToBackStack(null)
-                .commit()
+        var query = ""
+        imageListAdapter.onLoadMoreListener = {
+            if(query != "") {
+                viewModel.loadImages(query, CURRENT_SEARCH)
+            }
         }
 
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(request: String?): Boolean {
                 Log.d("TEST_APP", "onQueryTextSubmit: $request")
-                request?.let {
-                    viewModel.loadImages(it, NEW_SEARCH)
-//                    imageAdapter.onLoadMoreListener = {
-//                        viewModel.loadImages(it, CURRENT_SEARCH)
-//                    }
+                if (isNetworkAvailable(requireContext())) {
+                    request?.let {
+                        viewModel.loadImages(it, NEW_SEARCH)
+                        query = request
+                    }
+                } else {
+                    imageListAdapter.submitList(null)
+                    showError()
                 }
                 return true
             }
@@ -105,6 +97,60 @@ class ImageListFragment @Inject constructor() : Fragment() {
                 return false
             }
         })
+
+        viewModel.listOfImages.observe(viewLifecycleOwner) { images ->
+            Log.d("TEST_APP", "List VM: ${viewModel.hashCode()}")
+            Log.d("TEST_APP", "$images")
+
+            if (isNetworkAvailable(requireContext())) {
+                hideError()
+                imageListAdapter.submitList(images)
+            }
+        }
+
+        imageListAdapter.onImageClickListener = { image ->
+            launchDetailsFragment(image)
+        }
+    }
+
+    private fun launchDetailsFragment(image: Image) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .add(
+                R.id.images_container,
+                ImageDetailsFragment.newInstance(image)
+            )
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        if (capabilities != null) {
+            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                return true
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                return true
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun hideError() {
+        binding.imError.visibility = View.GONE
+        binding.tvError.visibility = View.GONE
+    }
+
+    private fun showError() {
+        binding.imError.visibility = View.VISIBLE
+        binding.tvError.visibility = View.VISIBLE
     }
 
     companion object {

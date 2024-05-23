@@ -13,8 +13,8 @@ interface ApiService {
     "Content-Type: application/json"
 )
 suspend fun getImageResponse(
-    @Query(QUERY_PARAM_REQUEST) request: String = "apple",
-    @Query(QUERY_PARAM_PAGE) page: Int = 1
+    @Query(QUERY_PARAM_REQUEST) request: String,
+    @Query(QUERY_PARAM_PAGE) page: Int
 ): ImageResponseDto
 
     companion object {

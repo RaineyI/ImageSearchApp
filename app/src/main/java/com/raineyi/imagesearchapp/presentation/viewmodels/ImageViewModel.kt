@@ -26,37 +26,38 @@ class ImageViewModel @Inject constructor(
 
 
     fun loadImages(request: String, isNewSearch: Boolean) {
-        if (isNewSearch) {
-            currentPage = 1
-        }
         val loading = isLoading.value
+
         if (loading != null && loading) {
             return
         }
+
+        if (isNewSearch) {
+            currentPage = 1
+        } else {
+            currentPage++
+        }
+
         viewModelScope.launch {
             _isLoading.value = true
             try {
                 val images = loadImageListUseCase(request, currentPage)
-                val loadedImages = _listOfImages.value?.toMutableList()
-                if (loadedImages != null) {
-                    images?.let {
+                images?.let {
+                    if (isNewSearch) {
+                        _listOfImages.value = it
+                    } else {
+                        val loadedImages = _listOfImages.value?.toMutableList() ?: mutableListOf()
                         loadedImages.addAll(it)
-                        _listOfImages.value = it
-                    }
-                } else {
-                    images?.let {
-                        _listOfImages.value = it
+                        _listOfImages.value = loadedImages
                     }
                 }
-                Log.d("TEST_API", "Loaded page: $currentPage")
-                if (!isNewSearch) {
-                    currentPage++
-                }
+                Log.d("TEST_APP", "Loaded page: $currentPage")
+
             } catch (e: Exception) {
                 Log.d("TEST_API", e.message.toString())
             } finally {
+                _isLoading.value = false
             }
-            _isLoading.value = false
         }
     }
 }
