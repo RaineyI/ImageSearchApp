@@ -12,6 +12,8 @@ import android.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.viewbinding.ViewBinding
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.raineyi.imagesearchapp.R
 import com.raineyi.imagesearchapp.databinding.FragmentImageListBinding
 import com.raineyi.imagesearchapp.domain.Image
@@ -19,11 +21,9 @@ import com.raineyi.imagesearchapp.presentation.adapters.ImageListAdapter
 import com.raineyi.imagesearchapp.presentation.viewmodels.ImageViewModel
 import javax.inject.Inject
 
-class ImageListFragment @Inject constructor() : Fragment() {
+class ImageListFragment @Inject constructor() : Fragment(R.layout.fragment_image_list) {
 
-    private var _binding: FragmentImageListBinding? = null
-    private val binding: FragmentImageListBinding
-        get() = _binding ?: throw RuntimeException("FragmentImageListBinding == null")
+    private val binding by viewBinding(FragmentImageListBinding::bind)
 
     private lateinit var imageListAdapter: ImageListAdapter
 
@@ -33,23 +33,10 @@ class ImageListFragment @Inject constructor() : Fragment() {
 
     private var currentQuery: String = ""
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentImageListBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeIsLoading()
         setupRecyclerView()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     private fun observeIsLoading() {

@@ -10,18 +10,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
+import by.kirich1409.viewbindingdelegate.viewBinding
+import com.raineyi.imagesearchapp.R
 import com.raineyi.imagesearchapp.databinding.FragmentImageDetailsBinding
+import com.raineyi.imagesearchapp.databinding.FragmentImageListBinding
 import com.raineyi.imagesearchapp.domain.Image
 import com.raineyi.imagesearchapp.presentation.adapters.ImageDetailViewPagerAdapter
 import com.raineyi.imagesearchapp.presentation.adapters.ZoomOutPageTransformer
 import com.raineyi.imagesearchapp.presentation.viewmodels.ImageViewModel
 import javax.inject.Inject
 
-class ImageDetailsFragment @Inject constructor() : Fragment() {
+class ImageDetailsFragment @Inject constructor() : Fragment(R.layout.fragment_image_details) {
 
-    private var _binding: FragmentImageDetailsBinding? = null
-    private val binding: FragmentImageDetailsBinding
-        get() = _binding ?: throw RuntimeException("FragmentImageDetailsBinding == null")
+    private val binding by viewBinding(FragmentImageDetailsBinding::bind)
 
     private val viewModel by lazy {
         ViewModelProvider(requireActivity())[ImageViewModel::class.java]
@@ -33,24 +34,11 @@ class ImageDetailsFragment @Inject constructor() : Fragment() {
         parseParam()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentImageDetailsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpViewPager2()
         setUpOnBackPressedArrow()
         setUpLinkButton()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     private fun setUpLinkButton() {

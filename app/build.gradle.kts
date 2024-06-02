@@ -76,6 +76,8 @@ dependencies {
     ksp("com.google.dagger:dagger-android-processor:2.51")
     ksp("com.google.dagger:dagger-compiler:2.51")
 
+    implementation("com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.9")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
