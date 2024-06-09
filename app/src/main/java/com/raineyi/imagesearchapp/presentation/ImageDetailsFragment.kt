@@ -4,16 +4,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.raineyi.imagesearchapp.R
 import com.raineyi.imagesearchapp.databinding.FragmentImageDetailsBinding
-import com.raineyi.imagesearchapp.databinding.FragmentImageListBinding
 import com.raineyi.imagesearchapp.domain.Image
 import com.raineyi.imagesearchapp.presentation.adapters.ImageDetailViewPagerAdapter
 import com.raineyi.imagesearchapp.presentation.adapters.ZoomOutPageTransformer

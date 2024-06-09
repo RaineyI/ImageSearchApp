@@ -3,7 +3,6 @@ package com.raineyi.imagesearchapp.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.raineyi.imagesearchapp.BuildConfig
 import com.raineyi.imagesearchapp.R
 import com.raineyi.imagesearchapp.presentation.viewmodels.ImageViewModel
 import com.raineyi.imagesearchapp.presentation.viewmodels.ViewModelFactory
